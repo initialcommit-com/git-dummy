@@ -88,13 +88,6 @@ $ export git_dummy_option_name=option_value
 
 Explicitly specifying options at the command-line takes precedence over the corresponding environment variable values.
 
-## Installation
-See **Quickstart** section for details on installing manim and other dependencies. Then run:
-
-```console
-$ pip install git-dummy
-```
-
 ## Learn More
 Learn more about this tool on the [git-dummy project page](https://initialcommit.com/tools/git-dummy).
 
