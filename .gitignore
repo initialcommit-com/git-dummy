@@ -1,0 +1,6 @@
+.DS_Store
+__pycache__
+*.pyc
+build/
+dist/
+git_dummy.egg-info/
