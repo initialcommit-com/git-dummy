@@ -24,7 +24,7 @@ def main(
     ),
 ):
     settings.name = name
-    settings.git_dir = os.path.join(git_dir, name)
+    settings.git_dir = os.path.join(os.path.expanduser(git_dir), name)
     settings.commits = commits
 
     repo = git.Repo.init(settings.git_dir)
