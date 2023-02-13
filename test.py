@@ -1,5 +1,4 @@
 import unittest, git, argparse
-from manim import *
 
 from git_dummy.git_dummy import GitDummy
 
