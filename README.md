@@ -14,7 +14,7 @@ This will initialize a new Git repo in the current directory with 5 commits on a
 ## Use cases
 - Programatically generate Git repos for functional testing of Git tools
 - Mimic scenarios in real Git repos to practice on without touching real data
-- Generate Git demos to teach or learn from
+- Generate Git demo repos to teach or learn from
 
 ## Features
 - Run a one-liner git-dummy command in the terminal to generate a dummy Git repo based on your parameters
