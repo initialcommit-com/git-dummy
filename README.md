@@ -55,9 +55,9 @@ $ git-dummy -h
 ## Command options and flags
 Available options and flags include:
 
-`--name`: The name of the dummy Git repo.  
-`--commits`: The number of commits to populate in the dummy Git repo.  
-`--git-dir`: The path at which to store the dummy Git repo.
+`--name`: The name of the dummy Git repo, defaults to "dummy".  
+`--commits`: The number of commits to populate in the dummy Git repo, defaults to 5.  
+`--git-dir`: The path at which to store the dummy Git repo, defaults to current directory.
 
 ## Basic command examples
 Generate a dummy Git repo called "cheese" with 10 commits on your Desktop:
