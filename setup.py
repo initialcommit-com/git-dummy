@@ -8,7 +8,7 @@ setuptools.setup(
     version="0.0.1",
     author="Jacob Stopak",
     author_email="jacob@initialcommit.io",
-    description="Generate dummy Git repositories and populate them with the desired number of commits, branches, and structure.",
+    description="Generate dummy Git repositories populated with the desired number of commits, branches, and structure.",
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://initialcommit.com/tools/git-dummy",
