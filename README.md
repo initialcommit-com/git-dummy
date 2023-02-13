@@ -3,7 +3,7 @@
 [![GitHub tag](https://img.shields.io/github/v/release/initialcommit-com/git-dummy)](https://img.shields.io/github/v/release/initialcommit-com/git-dummy)
 [![Downloads](https://static.pepy.tech/badge/git-dummy)](https://pepy.tech/project/git-dummy)
 [![Contributors](https://img.shields.io/github/contributors/initialcommit-com/git-dummy)](https://github.com/initialcommit-com/git-dummy/graphs/contributors)
-[![Share](https://img.shields.io/twitter/url?label=Share&url=https%3A%2F%2Ftwitter.com%2Finitcommit)](https://twitter.com/intent/tweet?text=Check%20out%20git%2Ddummy%20%2D%20a%20tool%20to%20visualize%20%23Git%20operations%20in%20your%20local%20repos%20with%20a%20single%20terminal%20command,%20by%20%40initcommit!%20https%3A%2F%2Fgithub%2Ecom%2Finitialcommit%2Dcom%2Fgit%2Ddummy)
+[![Share](https://img.shields.io/twitter/url?label=Share&url=https%3A%2F%2Ftwitter.com%2Finitcommit)](https://twitter.com/intent/tweet?text=Check%20out%20git%2Ddummy%20%2D%20a%20tool%20to%20generate%20dummy%20Git%20repos%20populated%20with%20the%20desired%20number%20of%20commits,%20branches,%20and%20structure,%20by%20%40initcommit!%20https%3A%2F%2Fgithub%2Ecom%2Finitialcommit%2Dcom%2Fgit%2Ddummy)
 
 Generate dummy Git repositories and populate them with the desired number of commits, branches, and structure.
 
