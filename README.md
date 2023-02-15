@@ -63,11 +63,11 @@ Available options and flags include:
 `--branches`: The number of branches to generate in the dummy Git repo, defaults to 1.  
 `--git-dir`: The path at which to store the dummy Git repo, defaults to current directory.
 
-## Basic command examples
-Generate a dummy Git repo called "cheese" with 10 commits on your Desktop:
+## Command examples
+Generate a dummy Git repo called "cheese" on your Desktop, with 2 branches and 10 commits on each branch:
 
 ```console
-$ git-dummy --name=cheese --commits=10 --git-dir=~/Desktop
+$ git-dummy --name=cheese --branches=2 --commits=10 --git-dir=~/Desktop
 ```
 
 For convenience, environment variables can be set for any command-line option available in git-dummy. All environment variables start with `git_dummy_` followed by the name of the option.
