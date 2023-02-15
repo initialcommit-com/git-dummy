@@ -8,6 +8,7 @@ class Settings(BaseSettings):
     commits = 5
     branches = 1
     diverge_at = 0
+    merge = ""
 
     class Config:
         env_prefix = "git_dummy_"

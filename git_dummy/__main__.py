@@ -31,12 +31,17 @@ def main(
         settings.diverge_at,
         help="The point branches diverge from main at",
     ),
+    merge: str = typer.Option(
+        settings.merge,
+        help="Comma separated branch ids to merge back into main",
+    ),
 ):
     settings.name = name
     settings.git_dir = os.path.join(os.path.expanduser(git_dir), name)
     settings.commits = commits
     settings.branches = branches
     settings.diverge_at = diverge_at
+    settings.merge = merge
 
     repo = git.Repo.init(settings.git_dir)
     repo.config_writer().set_value("init", "defaultBranch", "main").release()
@@ -61,6 +66,19 @@ def main(
             open(os.path.join(settings.git_dir, f"{branch_name}.{d}"), "a").close()
             repo.index.add([f"{branch_name}.{d}"])
             repo.index.commit(f"Dummy commit #{d} on {branch_name}")
+        if settings.merge:
+            to_merge = settings.merge.split(",")
+            if str(settings.branches - 1) in to_merge:
+                repo.git.checkout("main")
+                main = repo.branches["main"]
+                branch = repo.branches[branch_name]
+                base = repo.git.merge_base(main, branch)
+                repo.index.merge_tree(branch, base=base)
+                repo.index.commit(
+                    f"Merge {branch_name} into main",
+                    parent_commits=(branch.commit, main.commit),
+                )
+                main.checkout(force=True)
 
         settings.branches -= 1
 

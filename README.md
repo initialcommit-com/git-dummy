@@ -7,21 +7,22 @@
 
 Generate dummy Git repositories and populate them with the desired number of commits, branches, and structure.
 
-Example: `$ git-dummy --commits=10 --branches=2 --diverge-at=3`
+Example: `$ git-dummy --commits=10 --branches=4 --merge=1`
 
-This will initialize a new Git repo in the current directory with 2 branches, each containing 10 commits.
+This will initialize a new Git repo in the current directory with 4 branches, each containing 10 commits, 1 of which is merged back into `main`.
 
-Note: All generated dummy repos have at minimum 1 branch called `main`. For dummies with multiple branches, branches are named `branch1, branch2, ..., branchN`. Each branch currently branches off of `main` at `--diverge-at` if supplied, or else a randomly chosen commit. The length of each branch is capped at the number of commits specified by `--commits`.
+Note: All generated dummy repos have at minimum 1 branch called `main`. For dummies with multiple branches, branches are named `branch1, branch2, ..., branchN`. Each branch currently branches off of `main` at `--diverge-at` if supplied, or else a randomly chosen commit. The length of each branch is capped at the number of commits specified by `--commits`. Use `--merge=x,y,...,n` to select which branches get merged back into `main`. 
 
 ## Use cases
 - Programatically generate Git repos for functional testing of Git tools
 - Decide how many commits and branches are generated
+- Select which branches get merged back into `main`
 - Mimic scenarios in real Git repos to practice on without touching real data
 - Generate Git demo repos to teach or learn from
 
 ## Features
 - Run a one-liner git-dummy command in the terminal to generate a dummy Git repo based on your parameters
-- Customize the repo name, path, number of commits, branches, and structure
+- Customize the repo name, path, number of commits, branches, merges, and structure
 
 ## Quickstart
 
@@ -61,7 +62,8 @@ Available options and flags include:
 `--name`: The name of the dummy Git repo, defaults to "dummy".  
 `--commits`: The number of commits to populate in the dummy Git repo, defaults to 5.  
 `--branches`: The number of branches to generate in the dummy Git repo, defaults to 1.  
-`--diverge-at`: The commit number at which branches diverge from `main`.
+`--diverge-at`: The commit number at which branches diverge from `main`.  
+`--merge`: A comma separated list of branch postfix ids to merge back into `main`.  
 `--git-dir`: The path at which to store the dummy Git repo, defaults to current directory.
 
 ## Command examples
@@ -75,6 +77,12 @@ Generate a dummy repo with 4 branches `main`, `branch1`, `branch2`, and `branch3
 
 ```console
 $ git-dummy --branches=4 --diverge-at=2
+```
+
+Generate a dummy repo with 4 branches, so that `branch1` and `branch3` are merged back into `main`:
+
+```console
+$ git-dummy --branches=4 --merge=1,3
 ```
 
 For convenience, environment variables can be set for any command-line option available in git-dummy. All environment variables start with `git_dummy_` followed by the name of the option.
