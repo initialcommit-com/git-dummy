@@ -7,12 +7,15 @@
 
 Generate dummy Git repositories and populate them with the desired number of commits, branches, and structure.
 
-Example: `$ git-dummy --commits=5`
+Example: `$ git-dummy --commits=10 --branches=2`
 
-This will initialize a new Git repo in the current directory with 5 commits on a single branch.
+This will initialize a new Git repo in the current directory with 2 branches, each containing 10 commits.
+
+Note: All generated dummy repos have at minimum 1 branch called `main`. For dummies with multiple branches, branches are named `branch1, branch2, ..., branchN`. Each branch currently branches off of `main` at a randomly chosen commit. The length of each branch is capped at the number of commits specified by `--commits`.
 
 ## Use cases
 - Programatically generate Git repos for functional testing of Git tools
+- Decide how many commits and branches are generated
 - Mimic scenarios in real Git repos to practice on without touching real data
 - Generate Git demo repos to teach or learn from
 
@@ -57,6 +60,7 @@ Available options and flags include:
 
 `--name`: The name of the dummy Git repo, defaults to "dummy".  
 `--commits`: The number of commits to populate in the dummy Git repo, defaults to 5.  
+`--branches`: The number of branches to generate in the dummy Git repo, defaults to 1.  
 `--git-dir`: The path at which to store the dummy Git repo, defaults to current directory.
 
 ## Basic command examples
