@@ -5,7 +5,7 @@
 [![Contributors](https://img.shields.io/github/contributors/initialcommit-com/git-dummy)](https://github.com/initialcommit-com/git-dummy/graphs/contributors)
 [![Share](https://img.shields.io/twitter/url?label=Share&url=https%3A%2F%2Ftwitter.com%2Finitcommit)](https://twitter.com/intent/tweet?text=Check%20out%20git%2Ddummy%20%2D%20a%20tool%20to%20generate%20dummy%20Git%20repos%20populated%20with%20the%20desired%20number%20of%20commits,%20branches,%20and%20structure,%20by%20%40initcommit!%20https%3A%2F%2Fgithub%2Ecom%2Finitialcommit%2Dcom%2Fgit%2Ddummy)
 
-Generate dummy Git repositories and populate them with the desired number of commits, branches, and structure.
+Generate dummy Git repositories and populate them with the desired number of commits, branches, merges, and structure.
 
 Example: `$ git-dummy --commits=10 --branches=4 --merge=1`
 
