@@ -7,11 +7,11 @@
 
 Generate dummy Git repositories and populate them with the desired number of commits, branches, and structure.
 
-Example: `$ git-dummy --commits=10 --branches=2`
+Example: `$ git-dummy --commits=10 --branches=2 --diverge-at=3`
 
 This will initialize a new Git repo in the current directory with 2 branches, each containing 10 commits.
 
-Note: All generated dummy repos have at minimum 1 branch called `main`. For dummies with multiple branches, branches are named `branch1, branch2, ..., branchN`. Each branch currently branches off of `main` at a randomly chosen commit. The length of each branch is capped at the number of commits specified by `--commits`.
+Note: All generated dummy repos have at minimum 1 branch called `main`. For dummies with multiple branches, branches are named `branch1, branch2, ..., branchN`. Each branch currently branches off of `main` at `--diverge-at` if supplied, or else a randomly chosen commit. The length of each branch is capped at the number of commits specified by `--commits`.
 
 ## Use cases
 - Programatically generate Git repos for functional testing of Git tools
@@ -61,6 +61,7 @@ Available options and flags include:
 `--name`: The name of the dummy Git repo, defaults to "dummy".  
 `--commits`: The number of commits to populate in the dummy Git repo, defaults to 5.  
 `--branches`: The number of branches to generate in the dummy Git repo, defaults to 1.  
+`--diverge-at`: The commit number at which branches diverge from `main`.
 `--git-dir`: The path at which to store the dummy Git repo, defaults to current directory.
 
 ## Command examples
@@ -68,6 +69,12 @@ Generate a dummy Git repo called "cheese" on your Desktop, with 2 branches and 1
 
 ```console
 $ git-dummy --name=cheese --branches=2 --commits=10 --git-dir=~/Desktop
+```
+
+Generate a dummy repo with 4 branches `main`, `branch1`, `branch2`, and `branch3`. Branches diverge from `main` after the 2nd commit:
+
+```console
+$ git-dummy --branches=4 --diverge-at=2
 ```
 
 For convenience, environment variables can be set for any command-line option available in git-dummy. All environment variables start with `git_dummy_` followed by the name of the option.

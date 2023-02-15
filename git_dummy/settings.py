@@ -7,6 +7,7 @@ class Settings(BaseSettings):
     git_dir = pathlib.Path().cwd()
     commits = 5
     branches = 1
+    diverge_at = 0
 
     class Config:
         env_prefix = "git_dummy_"

@@ -27,11 +27,16 @@ def main(
         settings.branches,
         help="The number of branches to generate",
     ),
+    diverge_at: int = typer.Option(
+        settings.diverge_at,
+        help="The point branches diverge from main at",
+    ),
 ):
     settings.name = name
     settings.git_dir = os.path.join(os.path.expanduser(git_dir), name)
     settings.commits = commits
     settings.branches = branches
+    settings.diverge_at = diverge_at
 
     repo = git.Repo.init(settings.git_dir)
     repo.config_writer().set_value("init", "defaultBranch", "main").release()
@@ -43,7 +48,11 @@ def main(
 
     while settings.branches - 1 > 0:
         repo.git.checkout("main")
-        r = random.choice(range(1, settings.commits))
+        r = (
+            (settings.commits - settings.diverge_at)
+            if settings.diverge_at
+            else random.choice(range(1, settings.commits))
+        )
         repo.git.checkout(f"HEAD~{r}")
         branch_name = f"branch{settings.branches - 1}"
         repo.create_head(branch_name)
