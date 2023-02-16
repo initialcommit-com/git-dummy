@@ -35,13 +35,21 @@ def main(
         settings.merge,
         help="Comma separated branch ids to merge back into main",
     ),
+    no_subdir: bool = typer.Option(
+        settings.no_subdir,
+        help="Initialize the dummy Git repo in the current directory instead of in a subdirectory",
+    ),
 ):
     settings.name = name
-    settings.git_dir = os.path.join(os.path.expanduser(git_dir), name)
     settings.commits = commits
     settings.branches = branches
     settings.diverge_at = diverge_at
     settings.merge = merge
+    settings.no_subdir = no_subdir
+
+    settings.git_dir = os.path.expanduser(git_dir)
+    if not settings.no_subdir:
+        settings.git_dir = os.path.join(settings.git_dir, settings.name)
 
     repo = git.Repo.init(settings.git_dir)
     repo.config_writer().set_value("init", "defaultBranch", "main").release()

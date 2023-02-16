@@ -9,6 +9,7 @@ class Settings(BaseSettings):
     branches = 1
     diverge_at = 0
     merge = ""
+    no_subdir = False
 
     class Config:
         env_prefix = "git_dummy_"
