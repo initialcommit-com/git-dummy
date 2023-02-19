@@ -3,6 +3,7 @@ import git
 import pathlib
 import os
 import random
+import sys
 
 from git_dummy.settings import settings
 
@@ -50,6 +51,24 @@ def main(
     settings.git_dir = os.path.expanduser(git_dir)
     if not settings.no_subdir:
         settings.git_dir = os.path.join(settings.git_dir, settings.name)
+
+    try:
+        git.Repo(settings.git_dir, search_parent_directories=True)
+        print(
+            f"git-dummy error: Git repository already exists at {settings.git_dir} or parent"
+        )
+        sys.exit(1)
+    except (git.exc.InvalidGitRepositoryError, git.exc.NoSuchPathError):
+        try:
+            git.Repo(pathlib.Path().cwd(), search_parent_directories=True)
+            print(
+                f"git-dummy error: Git repository already exists at {settings.git_dir} or parent"
+            )
+            sys.exit(1)
+        except git.exc.InvalidGitRepositoryError:
+            print(
+                f"git-dummy: Generating dummy Git repo at {settings.git_dir} with {settings.branches} branch(es) and {settings.commits} commit(s)."
+            )
 
     repo = git.Repo.init(settings.git_dir)
     repo.config_writer().set_value("init", "defaultBranch", "main").release()
