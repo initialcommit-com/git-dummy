@@ -64,8 +64,9 @@ Available options and flags include:
 `--branches`: The number of branches to generate in the dummy Git repo, defaults to 1.  
 `--diverge-at`: The commit number at which branches diverge from `main`.  
 `--merge`: A comma separated list of branch postfix ids to merge back into `main`.  
-`--git-dir`: The path at which to store the dummy Git repo, defaults to current directory.
-`--no-subdir`: Initialize the dummy Git repo in the current directory instead of in a subdirectory.
+`--git-dir`: The path at which to store the dummy Git repo, defaults to current directory.  
+`--no-subdir`: Initialize the dummy Git repo in the current directory instead of in a subdirectory.  
+`--constant_sha`: Use constant values for commit author, email, and commit date parameters to yield consistent sha1 values across git-dummy runs.
 
 ## Command examples
 Generate a dummy Git repo called "cheese" on your Desktop, with 2 branches and 10 commits on each branch:

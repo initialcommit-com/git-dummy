@@ -7,6 +7,9 @@ import sys
 
 from git_dummy.settings import settings
 
+
+
+
 app = typer.Typer(context_settings={"help_option_names": ["-h", "--help"]})
 
 
@@ -40,6 +43,10 @@ def main(
         settings.no_subdir,
         help="Initialize the dummy Git repo in the current directory instead of in a subdirectory",
     ),
+    constant_sha: bool = typer.Option(
+        settings.constant_sha,
+        help="Use constant values for commit author, email, and commit date parameters to yield consistent sha1 values across git-dummy runs",
+    ),
 ):
     settings.name = name
     settings.commits = commits
@@ -47,6 +54,7 @@ def main(
     settings.diverge_at = diverge_at
     settings.merge = merge
     settings.no_subdir = no_subdir
+    settings.constant_sha = constant_sha
 
     settings.git_dir = os.path.expanduser(git_dir)
     if not settings.no_subdir:
@@ -71,46 +79,65 @@ def main(
             )
 
     repo = git.Repo.init(settings.git_dir)
-    repo.config_writer().set_value("init", "defaultBranch", "main").release()
 
-    for c in range(1, settings.commits + 1):
-        open(os.path.join(settings.git_dir, f"main.{c}"), "a").close()
-        repo.index.add([f"main.{c}"])
-        repo.index.commit(f"Dummy commit #{c} on main")
+    config_writer = repo.config_writer()
+    config_writer.set_value("init", "defaultBranch", "main").release()
+    if settings.constant_sha:
+        config_writer.set_value("user", "name", "Git Dummy")
+        config_writer.set_value("user", "email", "dumdum@git.dummy")
+    config_writer.release()
+    
+    if settings.constant_sha:
+        os.environ["GIT_AUTHOR_DATE"] = "2023-01-01T00:00:00"
+        os.environ["GIT_COMMITTER_DATE"] = "2023-01-01T00:00:00"
 
-    while settings.branches - 1 > 0:
+    try:
+        for c in range(1, settings.commits + 1):
+            open(os.path.join(settings.git_dir, f"main.{c}"), "a").close()
+            repo.index.add([f"main.{c}"])
+            repo.index.commit(f"Dummy commit #{c} on main")
+
+        while settings.branches - 1 > 0:
+            repo.git.checkout("main")
+            r = (
+                (settings.commits - settings.diverge_at)
+                if settings.diverge_at
+                else random.choice(range(1, settings.commits))
+            )
+            repo.git.checkout(f"HEAD~{r}")
+            branch_name = f"branch{settings.branches - 1}"
+            repo.create_head(branch_name)
+            repo.git.checkout(branch_name)
+            for d in range(settings.commits - r + 1, settings.commits + 1):
+                open(os.path.join(settings.git_dir, f"{branch_name}.{d}"), "a").close()
+                repo.index.add([f"{branch_name}.{d}"])
+                repo.index.commit(f"Dummy commit #{d} on {branch_name}")
+            if settings.merge:
+                to_merge = settings.merge.split(",")
+                if str(settings.branches - 1) in to_merge:
+                    repo.git.checkout("main")
+                    main = repo.branches["main"]
+                    branch = repo.branches[branch_name]
+                    base = repo.git.merge_base(main, branch)
+                    repo.index.merge_tree(branch, base=base)
+                    repo.index.commit(
+                        f"Merge {branch_name} into main",
+                        parent_commits=(branch.commit, main.commit),
+                    )
+                    main.checkout(force=True)
+
+            settings.branches -= 1
+
         repo.git.checkout("main")
-        r = (
-            (settings.commits - settings.diverge_at)
-            if settings.diverge_at
-            else random.choice(range(1, settings.commits))
-        )
-        repo.git.checkout(f"HEAD~{r}")
-        branch_name = f"branch{settings.branches - 1}"
-        repo.create_head(branch_name)
-        repo.git.checkout(branch_name)
-        for d in range(settings.commits - r + 1, settings.commits + 1):
-            open(os.path.join(settings.git_dir, f"{branch_name}.{d}"), "a").close()
-            repo.index.add([f"{branch_name}.{d}"])
-            repo.index.commit(f"Dummy commit #{d} on {branch_name}")
-        if settings.merge:
-            to_merge = settings.merge.split(",")
-            if str(settings.branches - 1) in to_merge:
-                repo.git.checkout("main")
-                main = repo.branches["main"]
-                branch = repo.branches[branch_name]
-                base = repo.git.merge_base(main, branch)
-                repo.index.merge_tree(branch, base=base)
-                repo.index.commit(
-                    f"Merge {branch_name} into main",
-                    parent_commits=(branch.commit, main.commit),
-                )
-                main.checkout(force=True)
 
-        settings.branches -= 1
+    except Exception as e:
+        raise e
 
-    repo.git.checkout("main")
-
+    finally:
+        # If needed, delete the environment variables set by git-dummy
+        if settings.constant_sha:
+            del os.environ["GIT_AUTHOR_DATE"]
+            del os.environ["GIT_COMMITTER_DATE"]
 
 if __name__ == "__main__":
     app()

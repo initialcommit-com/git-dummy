@@ -10,6 +10,7 @@ class Settings(BaseSettings):
     diverge_at = 0
     merge = ""
     no_subdir = False
+    constant_sha = False
 
     class Config:
         env_prefix = "git_dummy_"
