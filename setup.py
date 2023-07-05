@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="git-dummy",
-    version="0.0.8",
+    version="0.0.9",
     author="Jacob Stopak",
     author_email="jacob@initialcommit.io",
     description="Generate dummy Git repositories populated with the desired number of commits, branches, and structure.",
