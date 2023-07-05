@@ -1,16 +1,16 @@
 import pathlib
-from pydantic import BaseSettings
+from pydantic_settings import BaseSettings
 
 
 class Settings(BaseSettings):
-    name = "dummy"
-    git_dir = pathlib.Path().cwd()
-    commits = 5
-    branches = 1
-    diverge_at = 0
-    merge = ""
-    no_subdir = False
-    constant_sha = False
+    name: str = "dummy"
+    git_dir: pathlib.Path = pathlib.Path().cwd()
+    commits: int = 5
+    branches: int = 1
+    diverge_at: int = 0
+    merge: str = ""
+    no_subdir: bool = False
+    constant_sha: bool = False
 
     class Config:
         env_prefix = "git_dummy_"

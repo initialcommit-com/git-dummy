@@ -22,7 +22,7 @@ setuptools.setup(
     install_requires=[
         "gitpython",
         "typer",
-        "pydantic",
+        "pydantic_settings",
     ],
     keywords="git dummy generate populate repo repository",
     project_urls={
