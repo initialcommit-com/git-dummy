@@ -78,10 +78,10 @@ def main(
                 f"git-dummy: Generating dummy Git repo at {settings.git_dir} with {settings.branches} branch(es) and {settings.commits} commit(s)."
             )
 
-    repo = git.Repo.init(settings.git_dir)
+    repo = git.Repo.init(settings.git_dir, initial_branch="main")
 
     config_writer = repo.config_writer()
-    config_writer.set_value("init", "defaultBranch", "main").release()
+    config_writer.set_value("init", "defaultBranch", "main")
     if settings.constant_sha:
         config_writer.set_value("user", "name", "Git Dummy")
         config_writer.set_value("user", "email", "dumdum@git.dummy")
