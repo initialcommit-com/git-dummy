@@ -1,13 +1,10 @@
 import typer
 import git
-import pathlib
 import os
 import random
 import sys
-
+from pathlib import Path
 from git_dummy.settings import settings
-
-
 
 
 app = typer.Typer(context_settings={"help_option_names": ["-h", "--help"]})
@@ -19,7 +16,7 @@ def main(
         settings.name,
         help="Name of the dummy repo",
     ),
-    git_dir: pathlib.Path = typer.Option(
+    git_dir: str = typer.Option(
         settings.git_dir,
         help="The path in which to create the dummy Git repo",
     ),
@@ -56,10 +53,13 @@ def main(
     settings.no_subdir = no_subdir
     settings.constant_sha = constant_sha
 
-    settings.git_dir = os.path.expanduser(git_dir)
-    if not settings.no_subdir:
-        settings.git_dir = os.path.join(settings.git_dir, settings.name)
+    orig_git_dir = Path('.').resolve() if not git_dir else Path(git_dir).resolve()
+    print(f'Staring with git dir: {orig_git_dir}')
+    settings.git_dir = orig_git_dir / settings.name
+    if settings.no_subdir:
+        settings.git_dir = Path().cwd()
 
+    # this is really our error condition if it finds an existing git repository
     try:
         git.Repo(settings.git_dir, search_parent_directories=True)
         print(
@@ -67,16 +67,10 @@ def main(
         )
         sys.exit(1)
     except (git.exc.InvalidGitRepositoryError, git.exc.NoSuchPathError):
-        try:
-            git.Repo(pathlib.Path().cwd(), search_parent_directories=True)
-            print(
-                f"git-dummy error: Git repository already exists at {settings.git_dir} or parent"
-            )
-            sys.exit(1)
-        except git.exc.InvalidGitRepositoryError:
-            print(
-                f"git-dummy: Generating dummy Git repo at {settings.git_dir} with {settings.branches} branch(es) and {settings.commits} commit(s)."
-            )
+        # this is our success condition since it means we can create a repository
+        print(
+            f"git-dummy: Generating dummy Git repo at {settings.git_dir} with {settings.branches} branch(es) and {settings.commits} commit(s)."
+        )
 
     repo = git.Repo.init(settings.git_dir, initial_branch="main")
 
@@ -86,7 +80,7 @@ def main(
         config_writer.set_value("user", "name", "Git Dummy")
         config_writer.set_value("user", "email", "dumdum@git.dummy")
     config_writer.release()
-    
+
     if settings.constant_sha:
         os.environ["GIT_AUTHOR_DATE"] = "2023-01-01T00:00:00"
         os.environ["GIT_COMMITTER_DATE"] = "2023-01-01T00:00:00"
