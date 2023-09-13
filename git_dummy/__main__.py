@@ -16,7 +16,7 @@ def main(
         settings.name,
         help="Name of the dummy repo",
     ),
-    git_dir: str = typer.Option(
+    git_dir: Path = typer.Option(
         settings.git_dir,
         help="The path in which to create the dummy Git repo",
     ),
@@ -53,13 +53,12 @@ def main(
     settings.no_subdir = no_subdir
     settings.constant_sha = constant_sha
 
-    orig_git_dir = Path('.').resolve() if not git_dir else Path(git_dir).resolve()
-    print(f'Staring with git dir: {orig_git_dir}')
+    orig_git_dir = Path('.').resolve() if not git_dir else git_dir.resolve()
+    print(f"Starting with git dir: {orig_git_dir}")
     settings.git_dir = orig_git_dir / settings.name
     if settings.no_subdir:
         settings.git_dir = Path().cwd()
 
-    # this is really our error condition if it finds an existing git repository
     try:
         git.Repo(settings.git_dir, search_parent_directories=True)
         print(
@@ -67,7 +66,6 @@ def main(
         )
         sys.exit(1)
     except (git.exc.InvalidGitRepositoryError, git.exc.NoSuchPathError):
-        # this is our success condition since it means we can create a repository
         print(
             f"git-dummy: Generating dummy Git repo at {settings.git_dir} with {settings.branches} branch(es) and {settings.commits} commit(s)."
         )
