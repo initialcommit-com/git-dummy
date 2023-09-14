@@ -8,8 +8,6 @@ import sys
 from git_dummy.settings import settings
 
 
-
-
 app = typer.Typer(context_settings={"help_option_names": ["-h", "--help"]})
 
 
@@ -86,7 +84,7 @@ def main(
         config_writer.set_value("user", "name", "Git Dummy")
         config_writer.set_value("user", "email", "dumdum@git.dummy")
     config_writer.release()
-    
+
     if settings.constant_sha:
         os.environ["GIT_AUTHOR_DATE"] = "2023-01-01T00:00:00"
         os.environ["GIT_COMMITTER_DATE"] = "2023-01-01T00:00:00"
@@ -138,6 +136,7 @@ def main(
         if settings.constant_sha:
             del os.environ["GIT_AUTHOR_DATE"]
             del os.environ["GIT_COMMITTER_DATE"]
+
 
 if __name__ == "__main__":
     app()
