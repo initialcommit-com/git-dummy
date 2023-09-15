@@ -19,17 +19,12 @@ def is_git_dir(path):
 
 def is_inside_git_dir(path):
     while path and not is_dir_exist(path):
-        try:
-            git.Repo(path, search_parent_directories=True)
-            return True
-        except (git.exc.InvalidGitRepositoryError, git.exc.NoSuchPathError):
-            path = os.path.dirname(path)
-    else:
-        try:
-            git.Repo(path, search_parent_directories=True)
-            return True
-        except (git.exc.InvalidGitRepositoryError, git.exc.NoSuchPathError):
-            return False
+        path = os.path.dirname(path)
+    try:
+        git.Repo(path, search_parent_directories=True)
+        return True
+    except (git.exc.InvalidGitRepositoryError, git.exc.NoSuchPathError):
+        return False
 
 
 def is_valid_folder_name(name):
