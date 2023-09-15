@@ -18,7 +18,7 @@ def is_git_dir(path):
 
 
 def is_inside_git_dir(path):
-    while not is_dir_exist(path):
+    while path and not is_dir_exist(path):
         try:
             git.Repo(path, search_parent_directories=True)
             return True

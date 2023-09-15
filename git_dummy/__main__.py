@@ -66,7 +66,7 @@ def main(
     settings.constant_sha = constant_sha
     settings.allow_nested = allow_nested
 
-    settings.git_dir = os.path.expanduser(git_dir)
+    settings.git_dir = pathlib.Path(os.path.expanduser(git_dir)).resolve()
     if not settings.no_subdir:
         settings.git_dir = os.path.join(settings.git_dir, settings.name)
 
