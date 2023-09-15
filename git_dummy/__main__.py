@@ -6,6 +6,12 @@ import random
 import sys
 
 from git_dummy.settings import settings
+from git_dummy.util import (
+    is_dir_exist,
+    is_git_dir,
+    is_inside_git_dir,
+    is_valid_folder_name,
+)
 
 
 app = typer.Typer(context_settings={"help_option_names": ["-h", "--help"]})
@@ -16,6 +22,7 @@ def main(
     name: str = typer.Option(
         settings.name,
         help="Name of the dummy repo",
+        callback=is_valid_folder_name,
     ),
     git_dir: pathlib.Path = typer.Option(
         settings.git_dir,
@@ -45,6 +52,10 @@ def main(
         settings.constant_sha,
         help="Use constant values for commit author, email, and commit date parameters to yield consistent sha1 values across git-dummy runs",
     ),
+    allow_nested: bool = typer.Option(
+        settings.allow_nested,
+        help="Allow dummy repo creation within an existing Git repo, as long as it's not at the level of an existing .git/ folder",
+    ),
 ):
     settings.name = name
     settings.commits = commits
@@ -53,28 +64,25 @@ def main(
     settings.merge = merge
     settings.no_subdir = no_subdir
     settings.constant_sha = constant_sha
+    settings.allow_nested = allow_nested
 
     settings.git_dir = os.path.expanduser(git_dir)
     if not settings.no_subdir:
         settings.git_dir = os.path.join(settings.git_dir, settings.name)
 
-    try:
-        git.Repo(settings.git_dir, search_parent_directories=True)
+    if is_git_dir(settings.git_dir):
+        print(f"git-dummy error: Git repository already exists at {settings.git_dir}")
+        sys.exit(1)
+
+    if not settings.allow_nested and is_inside_git_dir(settings.git_dir):
         print(
-            f"git-dummy error: Git repository already exists at {settings.git_dir} or parent"
+            f"git-dummy error: Git repository already exists at {settings.git_dir} or parent: use --allow-nested flag to override"
         )
         sys.exit(1)
-    except (git.exc.InvalidGitRepositoryError, git.exc.NoSuchPathError):
-        try:
-            git.Repo(pathlib.Path().cwd(), search_parent_directories=True)
-            print(
-                f"git-dummy error: Git repository already exists at {settings.git_dir} or parent"
-            )
-            sys.exit(1)
-        except git.exc.InvalidGitRepositoryError:
-            print(
-                f"git-dummy: Generating dummy Git repo at {settings.git_dir} with {settings.branches} branch(es) and {settings.commits} commit(s)."
-            )
+
+    print(
+        f"git-dummy: Generating dummy Git repo at {settings.git_dir} with {settings.branches} branch(es) and {settings.commits} commit(s)."
+    )
 
     repo = git.Repo.init(settings.git_dir, initial_branch="main")
 

@@ -66,7 +66,8 @@ Available options and flags include:
 `--merge`: A comma separated list of branch postfix ids to merge back into `main`.  
 `--git-dir`: The path at which to store the dummy Git repo, defaults to current directory.  
 `--no-subdir`: Initialize the dummy Git repo in the current directory instead of in a subdirectory.  
-`--constant_sha`: Use constant values for commit author, email, and commit date parameters to yield consistent sha1 values across git-dummy runs.
+`--constant_sha`: Use constant values for commit author, email, and commit date parameters to yield consistent sha1 values across git-dummy runs.  
+`--allow-nested`: Allow dummy repo creation within an existing Git repo, as long as it's not at the level of an existing .git/ folder.
 
 ## Command examples
 Generate a dummy Git repo called "cheese" on your Desktop, with 2 branches and 10 commits on each branch:

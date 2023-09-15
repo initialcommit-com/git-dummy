@@ -11,6 +11,7 @@ class Settings(BaseSettings):
     merge: str = ""
     no_subdir: bool = False
     constant_sha: bool = False
+    allow_nested: bool = False
 
     class Config:
         env_prefix = "git_dummy_"
