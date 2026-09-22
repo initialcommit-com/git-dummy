@@ -4,3 +4,5 @@ __pycache__
 build/
 dist/
 git_dummy.egg-info/
+.venv/
+.pytest_cache/
