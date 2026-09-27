@@ -651,7 +651,8 @@ class Builder:
         for i in range(self.spec.stashes):
             self.sh.append(target, f"work in progress {i + 1}\n")
             note = self.content.stash_note(i) if self.realistic else f"WIP {i + 1}"
-            self.sh.git("stash", "push", "-q", "-m", note, "--", target)
+            # dated like the commits, so a stash's sha is the same on every build
+            self.sh.git("stash", "push", "-q", "-m", note, "--", target, env=self._date_env())
 
     def _dirty(self):
         s = self.spec
