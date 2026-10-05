@@ -205,6 +205,10 @@ Or `pipx install git-dummy`, or `uv tool install git-dummy`. YAML recipe files n
 
 Learn more on the [git-dummy project page](https://initialcommit.com/tools/git-dummy). git-dummy is what [git-sim](https://github.com/initialcommit-com/git-sim) ([project page](https://initialcommit.com/tools/git-sim)) uses for its demos, its tests, and the graphs in its README, and git-dummy powers all Git simulations on the [Initial Commit website](https://initialcommit.com) including:
 
+- The [animated Git cheat sheet](https://initialcommit.com/learn/git/animated-cheat-sheet): pick the commands you use and print your own sheet, each with an animation of what it does to your repo
+- The [visual Git command reference](https://initialcommit.com/learn/git/visual-command-reference): every command git-sim simulates, each drawn on a sample repo
+- The [Git command articles](https://initialcommit.com/learn/git/commands): one page per command, with interactive before-and-after simulations
+
 ## Support git-dummy
 
 git-dummy is free and open-source software. Your support helps me work on it, and other Git projects, full time:
