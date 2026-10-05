@@ -54,6 +54,12 @@ class Spec:
     worktree: Optional[str] = None
     submodule: bool = False
 
+    def __post_init__(self):
+        # a pathlib.Path (pytest's tmp_path, say) is as good as a string, and the
+        # spec is written out as JSON (the repo's .git/git-dummy.json)
+        if isinstance(self.git_dir, os.PathLike):
+            self.git_dir = os.fspath(self.git_dir)
+
     # ---- helpers -------------------------------------------------------------------
     def path(self) -> pathlib.Path:
         base = pathlib.Path(os.path.expanduser(str(self.git_dir))).resolve()

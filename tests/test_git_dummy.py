@@ -95,6 +95,13 @@ def test_build_from_a_scenario_with_overrides(tmp_path):
     assert r["stashes"] and r["worktree"]["untracked"]
 
 
+def test_git_dir_may_be_a_path(tmp_path):
+    from git_dummy import build as public_build
+
+    r = public_build(scenario="rebase-ready", git_dir=tmp_path)
+    assert os.path.isdir(r["path"]) and "main" in r["branches"]
+
+
 def test_orders_scenarios_are_reproducible(tmp_path):
     a = build(scenario="orders", git_dir=str(tmp_path / "a"))
     b = build(scenario="orders", git_dir=str(tmp_path / "b"))
