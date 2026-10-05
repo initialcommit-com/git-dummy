@@ -1,7 +1,9 @@
 import setuptools
 
+# The README's star link is #top, which scrolls to GitHub's Star button. PyPI
+# shows the README on its own page, so there it points at the repository.
 with open("README.md", "r", encoding="utf-8") as fh:
-    long_description = fh.read()
+    long_description = fh.read().replace("](#top)", "](https://github.com/initialcommit-com/git-dummy)")
 
 setuptools.setup(
     name="git-dummy",
