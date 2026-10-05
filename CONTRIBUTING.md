@@ -1,97 +1,92 @@
-# Contributing to Git-Dummy
+# Contributing to git-dummy
 
-Thanks for checking out Git-Dummy and for your interest in contributing!
+Thanks for checking out git-dummy and for your interest in contributing!
+
+## Ways to help
+
+- ⭐ [Star the repo](https://github.com/initialcommit-com/git-dummy)
+- [Open an issue](https://github.com/initialcommit-com/git-dummy/issues/new): a bug, a repository shape you need, or even a small friction or a confusing message
+- Tell people about git-dummy, especially anyone writing Git tutorials or testing Git tools
+- Contribute code, as described below
 
 ## Reporting bugs
 
-To report a bug you found, please open a [GitHub issue](https://github.com/initialcommit-com/git-dummy/issues/new)
-and describe the error or problem in detail. Please check [existing issues](https://github.com/initialcommit-com/git-dummy/issues)
-to make sure it hasn't already been reported.
+Please check [existing issues](https://github.com/initialcommit-com/git-dummy/issues) first, then [open a new one](https://github.com/initialcommit-com/git-dummy/issues/new) with:
 
-When submitting a new issue, it helps to include:
+1) The command you ran (or your recipe file), and what you expected to get
+2) What you got instead, with any error message
+3) Your git-dummy version (`pip show git-dummy`), Git version (`git --version`), Python version, and operating system
 
-1) The steps you took that lead to the issue
-2) Any error message(s) that you received
-3) A description of any unexpected behavior
-4) The version of Git-Dummy you're running
-5) The version of Python you're running and whether it's system-level or in a virtual environment
-6) The operating system and version you're running
+`git-dummy ... --print-script` prints the exact `git` commands a build runs, which often shows where it went wrong.
 
-## Suggesting enhancements or new features
+## Suggesting a scenario or feature
 
-If you've got a cool idea for a feature that you'd like to see implemented in
-Git-Dummy, we'd love to hear about it!
+[Open an issue](https://github.com/initialcommit-com/git-dummy/issues/new) describing the repository you need and what you'd use it for: a tutorial, a test, a demo. If it's a situation people get into in real repositories, it might make a good named scenario.
 
-To suggest an enhancement or new feature, please open a [GitHub issue](https://github.com/initialcommit-com/git-dummy/issues/new)
-and describe your proposed idea in detail. Please include why you think this
-idea would be beneficial to the Git-Dummy user base.
+## Setting up for development
 
-## Your first code contribution
+You need Python 3.8 or later, and Git 2.28 or later.
 
-Note: Git-Dummy is a new project so these steps are not fully optimized yet, but
-they should get you going.
-
-To start contributing code to Git-Dummy, you'll need to perform the following
-steps:
-
-1) [Fork the Git-Dummy codebase](https://github.com/initialcommit-com/git-dummy/fork)
-so that you have a copy on GitHub that you can clone and work with
-2) Clone the codebase down to your local machine
-3) If you previously installed Git-Dummy normally using pip, uninstall it first using:
-
-```console
-$ pip uninstall git-dummy
-```
-
-4) To run the code locally from source, install the development package by running:
+1) [Fork the repository](https://github.com/initialcommit-com/git-dummy/fork) and clone your fork
+2) Create a virtual environment and install git-dummy from source, with YAML support and pytest:
 
 ```console
 $ cd path/to/git-dummy
-$ python -m pip install -e .
+$ python -m venv .venv
+$ source .venv/bin/activate          # Windows: .venv\Scripts\activate
+$ python -m pip install -e ".[yaml]" pytest
 ```
 
-This will install sources from your cloned repo such that you can edit the source and the changes are reflected instantly.
+The editable install (`-e`) means your changes take effect as soon as you save. If you had installed git-dummy with pip before, `pip uninstall git-dummy` first.
 
-If you already have the dependencies, you can ignore those using the `--no-deps` flag:
+3) Build a repo with your local copy:
 
 ```console
-$ python -m pip install --no-deps -e .
+$ git-dummy --scenario merge-conflict --git-dir /tmp
 ```
 
-5) You can run Git-Dummy commands locally like this:
+## Where things are
+
+- `git_dummy/spec.py`: every option, in one `Spec` shared by the command line, the Python API, recipe files, and scenarios
+- `git_dummy/builder.py`: builds the repository a `Spec` describes, or records it as a shell script for `--print-script`
+- `git_dummy/scenarios.py`: the named scenarios
+- `git_dummy/content.py`: the realistic files, commit messages, and authors
+- `git_dummy/__main__.py`: the command line
+
+## Running the tests
 
 ```console
-$ git-dummy [global options] <subcommand> [subcommand options]
+$ pytest tests
 ```
 
-5) After pushing your code changes up to your fork, [submit a pull request](https://github.com/initialcommit-com/git-dummy/compare) for me
-to review your code, provide feedback, and integrate it into the codebase!
+Two things the tests protect, which a change must keep:
 
-## Code style guide
+- **The classic ids don't change.** A plain build with `--constant-sha` must produce the same commit ids as git-dummy 0.1.2, byte for byte. [git-sim](https://github.com/initialcommit-com/git-sim)'s test fixtures depend on them.
+- **The same seed builds the same repository.** Seeded builds are reproducible, so documentation and tests can show their commit ids.
 
-Since Git-Dummy is a new project, we don't have an official code style set in
-stone. For now just try and make your new code fit in with the existing style
-you find in the codebase, and we'll update this section later if that changes.
+If you work on git-sim too, run its validation suite (`pytest tests/validation` in git-sim) with git-dummy checked out beside it. It builds every repository shape it tests from your local git-dummy.
 
-## Code Formatting
+## Adding a scenario
 
-This project uses the [`black`](https://github.com/psf/black) code formatter to keep all code in a constistent format.
+1) Add an entry to `SCENARIOS` in `git_dummy/scenarios.py`, with a `_doc` line that says what situation it sets up
+2) Add a row to the Scenarios table in the README
+3) Add a test that builds it and checks the state it promises
 
-Please install it in your development environment and run `black path/to/changed/files` before committing any changes.
+## Code style
 
-## Commit conventions
+Match the code around your change: its naming, its comment density, and its idioms. The codebase isn't formatted with a single tool, so don't run a formatter over whole files, which would bury your change in unrelated edits.
 
-We have a few simple rules for Git-Dummy commit messages:
+## Commits and pull requests
 
-1) Write commit messages in the [imperative mood](https://initialcommit.com/blog/Git-Commit-Message-Imperative-Mood)
-2) Add a signoff trailer to your commits by using the `-s` flag when you make
-your commits, like this:
+1) Write commit messages in the [imperative mood](https://initialcommit.com/blog/Git-Commit-Message-Imperative-Mood): "Add", "Fix", "Build", not "Added" or "Fixes"
+2) Sign off your commits with `-s`, which adds a `Signed-off-by` trailer:
 
+```console
+$ git commit -s -m "Add a scenario for a rebase stopped on a conflict"
 ```
-$ git commit -sm "Fixed xyz..."
-```
+
+3) Push to your fork and [open a pull request](https://github.com/initialcommit-com/git-dummy/compare) against `main`, saying what changed and how you tested it.
 
 ## Questions
 
-If you have any additional questions about contributing to Git-Dummy, feel free
-to [send me an email at jacob@initialcommit.io](mailto:jacob@initialcommit.io).
+Feel free to [email me at jacob@initialcommit.io](mailto:jacob@initialcommit.io) with any questions about contributing.

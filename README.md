@@ -204,6 +204,8 @@ Learn more about this tool on the [git-dummy project page](https://initialcommit
 
 ## Support git-dummy
 
+⭐ [Star the repo](https://github.com/initialcommit-com/git-dummy)
+
 git-dummy is free and open-source software. Your support helps me work on it, and other Git projects, full time:
 - [Sponsor Initial Commit on GitHub](https://github.com/sponsors/initialcommit-com)
 - [Support Initial Commit via Patreon](https://patreon.com/user?u=92322459)
