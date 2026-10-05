@@ -3,14 +3,15 @@
 
 <a href="https://initialcommit.com/tools/git-dummy"><img src="https://initialcommit.com/img/initialcommit/logo.png" alt="Initial Commit" height="20"></a> [![GitHub license](https://img.shields.io/github/license/initialcommit-com/git-dummy)](https://github.com/initialcommit-com/git-dummy/blob/main/LICENSE) [![GitHub tag](https://img.shields.io/github/v/release/initialcommit-com/git-dummy)](https://img.shields.io/github/v/release/initialcommit-com/git-dummy) [![Downloads](https://static.pepy.tech/badge/git-dummy)](https://pepy.tech/project/git-dummy) [![Contributors](https://img.shields.io/github/contributors/initialcommit-com/git-dummy)](https://github.com/initialcommit-com/git-dummy/graphs/contributors)
 
-**Git repositories on demand:** generate the exact history, remote, and working-tree state you need, for tests, demos, tutorials, and practice, without touching real data.
+**Git repositories on demand:** generate the exact history, remote, and working-tree state you need for tests, demos, tutorials, and practice, without touching real data.
 
-- **Build any shape in one line:** commits, branches, merges, tags, a stopped merge conflict, stashes, a remote that is ahead or behind, a detached HEAD, worktrees, and submodules.
-- **Start from a named scenario** for the situations people actually get into, like a conflicted merge, a diverged remote, or a dirty working tree.
-- **Make it look real, and reproducible:** real-looking files, commit messages, and authors, the same repository every time from the same seed, and large histories fast through `git fast-import`.
+- **Build any repo shape in one command:** linear, divergent, commits, branches, merges, tags, a stopped merge conflict, untracked files, modified files, staged files, stashes, a remote that is ahead or behind, a detached HEAD, worktrees, and submodules.
+- **Start from a named scenario** for the situations people actually get into, like a conflicted merge, a diverged remote, rebase-ready, or a dirty working tree.
+- **Make it look real, and reproducible:** real-looking files, commit messages, and authors, persistent object ID's by specifying a starting seed, and large histories fast through `git fast-import`.
 - **Use it anywhere:** a one-liner in the terminal, a Python API that returns the paths, ids, and states it made, a recipe file, or a plain shell script of `git` commands for machines without Python.
+- **Agentic:** your agents can use it as a part of their testing flows if they depend on Git repo structure / state.
 
-The graph above is the `history` scenario, drawn by [git-sim](https://github.com/initialcommit-com/git-sim). Click it to see more on the git-dummy page.
+The graph above is the `history` scenario, drawn by [git-sim](https://github.com/initialcommit-com/git-sim).
 
 ## Requirements
 
@@ -33,23 +34,25 @@ Or `pipx install git-dummy`, or `uv tool install git-dummy`.
 $ git-dummy --commits=10 --branches=4 --merge=1
 ```
 
-This creates a repo called `dummy` in the current folder, with 4 branches of up to 10 commits each, and `branch1` merged back into `main`. Run `git-dummy -h` to list every option.
+This creates a repo called `dummy` by default (override with `--name=<name>`), in the current folder, with 4 branches of up to 10 commits each, and `branch1` merged back into `main`.
+
+Run `git-dummy -h` to list all options.
 
 **3. Start from a scenario:** the situation you want to practice, test, or demo
 
 ```console
 $ git-dummy --scenario merge-conflict       # a merge stopped on a conflict, markers in the file
 $ git-dummy --scenario diverged-remote      # local and remote both moved on: push is rejected, pull merges
-$ git-dummy --list-scenarios
+$ git-dummy --list-scenarios                # list all available scenarios
 ```
 
-**4. Make it look real:** a small web service with real-looking files, messages, and authors, the same every time from the same seed
+**4. Make it look real:** like a small web service with real-looking files, messages, and authors, consistent across generations via the same seed
 
 ```console
 $ git-dummy --style realistic --seed 42 --commits 8 --branches 2 --remote --behind 2 --ahead 1
 ```
 
-**5. Build one in a test:** the Python API returns everything it made
+**5. Build one in a test:** the Python API returns everything git-dummy made
 
 ```python
 from git_dummy import build
@@ -58,7 +61,7 @@ repo = build(scenario="rebase-ready", git_dir=tmp_path)
 repo["branches"]["main"]   # the tip of main
 ```
 
-**6. See it:** draw the repo with [git-sim](https://github.com/initialcommit-com/git-sim), or build the sample repo git-sim's README is drawn on and run its commands in it
+**6. See it:** draw the repo with [git-sim](https://github.com/initialcommit-com/git-sim), and visually simulate Git commands on it
 
 ```console
 $ git-dummy --scenario orders
@@ -68,7 +71,7 @@ $ git-sim log --all
 
 ## Scenarios
 
-`git-dummy --scenario <name>` starts from one of these, and any other option overrides the scenario's choice. `git-dummy --list-scenarios` prints the list.
+`git-dummy --scenario <name>` starts from one of these, and specifying additional options (like `--commits` or `--branches` overrides the scenario's defaults. List all scenarios with `git-dummy --list-scenarios`
 
 | Scenario | What you get |
 |---|---|
@@ -112,7 +115,7 @@ build(Spec.from_recipe("repo.yaml"))
 
 ## Recipes, scripts, and cleanup
 
-A recipe file holds the same options as the command line, in JSON or YAML. `--print-script` writes the plain `git` commands that would build the repo instead of building it, for a machine without Python or a tutorial's appendix:
+A recipe file holds the same options as the command line, in JSON or YAML. `--print-script` writes the plain `git` commands that would build the repo instead of actually doing it, for a machine without Python or a tutorial's appendix:
 
 ```console
 $ cat repo.json
@@ -125,7 +128,7 @@ $ git-dummy --from repo.json --print-script > build-practice.sh
 
 ## What gets created where
 
-The repository goes in `<git-dir>/<name>` (or the current directory with `--no-subdir`). Everything else git-dummy makes sits beside it and is listed in the repo's `.git/git-dummy.json`, which is what `--clean` reads:
+By default git-dummy creates a project folder called `dummy` and initializes the dummy Git repo with `.git/` folder in there. Override that with by specifying `--git-dir` and/or `--name`, which will create the repo at `<git-dir>/<name>` (or put the `.git/` folder in the current directory with `--no-subdir`). Everything else git-dummy makes sits beside it and is listed in the repo's `.git/git-dummy.json`, which is what `--clean` reads:
 
 - `<name>.git`: the bare remote (`--remote`)
 - `<name>-<branch>`: a linked worktree (`--worktree`)
@@ -148,7 +151,7 @@ The ones you'll reach for most:
 `--remote`, `--ahead <number>`, `--behind <number>`: a remote, and how far apart they are  
 `--modified`, `--staged`, `--untracked`, `--stashes`, `--conflict`: something in the working tree
 
-Every option can also be set with an environment variable named `git_dummy_` plus the option, such as `git_dummy_git_dir=~/Desktop` or `git_dummy_style=realistic`. An option on the command line wins over the variable.
+Every option can also be set with an environment variable named `git_dummy_` plus the option, such as `git_dummy_git_dir=~/Desktop` or `git_dummy_style=realistic`. Specifying an option on the command line overrides the environment variable.
 
 <details>
 <summary>All options</summary>
@@ -200,7 +203,7 @@ Or `pipx install git-dummy`, or `uv tool install git-dummy`. YAML recipe files n
 
 ## Learn more
 
-Learn more about this tool on the [git-dummy project page](https://initialcommit.com/tools/git-dummy). git-dummy is what [git-sim](https://github.com/initialcommit-com/git-sim) ([project page](https://initialcommit.com/tools/git-sim)) uses for its demos, its tests, and the graphs in its README, and the sample repositories behind the [visual Git command reference](https://initialcommit.com/learn/git/visual-command-reference) come from the same idea.
+Learn more on the [git-dummy project page](https://initialcommit.com/tools/git-dummy). git-dummy is what [git-sim](https://github.com/initialcommit-com/git-sim) ([project page](https://initialcommit.com/tools/git-sim)) uses for its demos, its tests, and the graphs in its README, and git-dummy powers all Git simulations on the [Initial Commit website](https://initialcommit.com) including:
 
 ## Support git-dummy
 
