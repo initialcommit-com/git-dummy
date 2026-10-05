@@ -77,7 +77,7 @@ $ git-dummy -h
 | Scenario | What you get |
 |---|---|
 | `clean` | A tidy linear history on `main`. |
-| `history` | Twelve commits, three merged topic branches, two tags: for log and graph demos. |
+| `history` | Twelve commits on `main`, three merged topic branches with their own commits, two tags: for log and graph demos. |
 | `rebase-ready` | A feature branch diverged from `main` with commits on both, checked out on the feature. |
 | `merge-conflict` | A merge stopped on a conflict, markers in the file. |
 | `messy-worktree` | Staged, modified and untracked files plus a stash. |
@@ -93,6 +93,8 @@ $ git-dummy -h
 | `worktree` | A linked worktree beside the repo, checked out on a branch. |
 | `reflog` | A few HEAD moves so the reflog has entries. |
 | `large` | Two thousand commits on five branches, through `fast-import`. |
+| `orders` | The sample app [git-sim's README](https://github.com/initialcommit-com/git-sim) draws: two topic branches, a tag, a remote, something in every working-tree zone, a stash and a reflog. Build it, then run the README's git-sim commands inside it. |
+| `orders-behind` | The same app with a remote two commits ahead, for `fetch` and `pull`. |
 
 ## Python API
 
@@ -133,7 +135,7 @@ Available options and flags include:
 `--criss-cross`: Make `main` and the first branch each merge the other.  
 `--orphan-branch`: Add a branch with its own root and a single page.  
 `--fast` / `--no-fast`: Write the history with `git fast-import` (default: only when it is large).  
-`--remote`: Create a bare remote beside the repo (`<name>.origin.git`), push everything to it and track it as `origin`.  
+`--remote`: Create a bare remote beside the repo (`<name>.git`), add it as `origin` by the relative path `../<name>.git`, push everything to it and track it. Git writes the remote's URL into messages like "Merge branch 'main' of ../<name>", so no path from your machine ends up in the history.  
 `--ahead`: Commits on local `main` the remote does not have.  
 `--behind`: Commits the remote gained since the last fetch.  
 `--modified`, `--staged`, `--untracked`: Tracked files with uncommitted edits, edits staged for the next commit, and new files.  
@@ -196,12 +198,12 @@ Explicitly specifying options at the command-line takes precedence over the corr
 ## What gets created where
 The repository goes in `<git-dir>/<name>` (or the current directory with `--no-subdir`). Everything else git-dummy makes sits beside it and is listed in the repo's `.git/git-dummy.json`, which is what `--clean` reads:
 
-- `<name>.origin.git`: the bare remote (`--remote`)
+- `<name>.git`: the bare remote (`--remote`)
 - `<name>-<branch>`: a linked worktree (`--worktree`)
 - `<name>.lib`: the library a submodule points at (`--submodule`)
 
 ## Learn More
-Learn more about this tool on the [git-dummy project page](https://initialcommit.com/tools/git-dummy). git-dummy is what [git-sim](https://github.com/initialcommit-com/git-sim) uses for its demos, its tests and the graphs in its README.
+Learn more about this tool on the [git-dummy project page](https://initialcommit.com/tools/git-dummy). git-dummy is what [git-sim](https://github.com/initialcommit-com/git-sim) ([project page](https://initialcommit.com/tools/git-sim)) uses for its demos, its tests and the graphs in its README, and the sample repositories behind the [visual Git command reference](https://initialcommit.com/learn/git/visual-command-reference) come from the same idea.
 
 ## Authors
 **Jacob Stopak** - on behalf of [Initial Commit](https://initialcommit.com)

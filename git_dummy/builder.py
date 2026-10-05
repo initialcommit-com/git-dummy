@@ -555,9 +555,13 @@ class Builder:
     # -- remote --------------------------------------------------------------------------
     def _remote(self):
         s = self.spec
-        bare = self.parent / f"{s.name}.origin.git"
+        # The remote sits beside the repository as <name>.git and is added by a
+        # relative path, as a real project's would be by its URL: git writes the
+        # URL into merge messages ("Merge branch 'main' of ../<name>"), so an
+        # absolute one would put this machine's paths into the history.
+        bare = self.parent / f"{s.name}.git"
         self.created.append(str(bare))
-        url = "../" + bare.name if self.dry else str(bare)
+        url = "../" + bare.name
         self.sh.git("init", "-q", "--bare", "-b", "main", url, check=not self.dry)
         self.sh.git("remote", "add", "origin", url)
         self.sh.git("push", "-q", "--all", "origin")
@@ -725,7 +729,7 @@ class Builder:
             "remote": None,
         }
         if self.spec.remote:
-            bare = self.parent / f"{self.spec.name}.origin.git"
+            bare = self.parent / f"{self.spec.name}.git"
             result["remote"] = {"name": "origin", "path": str(bare), "branches": remote_branches}
         return result
 
@@ -736,7 +740,15 @@ class Builder:
 def build(spec: Optional[Spec] = None, **options) -> Dict:
     """Build the repository a Spec (or keyword options) describes and return a
     description of what was made: path, head, branches, tags, commits, files,
-    working-tree state, stashes, worktrees and the remote."""
+    working-tree state, stashes, worktrees and the remote. `scenario=<name>`
+    starts from a named scenario, which the other options override."""
+    scenario = options.pop("scenario", None)
+    if scenario:
+        from git_dummy.scenarios import apply_scenario
+
+        base = apply_scenario(scenario, spec or Spec())
+        spec = None
+        options = {**base.to_dict(), **options}
     if spec is None:
         spec = Spec.from_dict(options)
     elif options:

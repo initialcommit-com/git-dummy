@@ -72,7 +72,9 @@ def test_remote_ahead_and_behind(tmp_path):
     path = tmp_path / "rem"
     remote = r["remote"]["path"]
     assert os.path.isdir(remote)
-    assert git(path, "remote", "get-url", "origin") == remote
+    assert os.path.basename(remote) == "rem.git"
+    # added by a relative path, so no path from this machine gets into messages
+    assert git(path, "remote", "get-url", "origin") == "../rem.git"
     # local main is 2 ahead of what it last fetched
     assert rev_list_count(path, "origin/main..main") == 2
     # the remote itself moved on by 3 that we have not fetched
@@ -80,6 +82,27 @@ def test_remote_ahead_and_behind(tmp_path):
     git(path, "fetch", "-q", "origin")
     assert rev_list_count(path, "main..origin/main") == 3
     assert git(path, "rev-parse", "--abbrev-ref", "main@{upstream}") == "origin/main"
+    git(path, "merge", "-q", "--no-edit", "origin/main")
+    git(path, "pull", "-q", "--no-rebase", "--no-edit")
+    assert str(tmp_path) not in git(path, "log", "--format=%s", "-n", "3")
+
+
+def test_build_from_a_scenario_with_overrides(tmp_path):
+    r = build(scenario="orders", git_dir=str(tmp_path), commits=4)
+    assert os.path.basename(r["path"]) == "orders"
+    assert {"feature/pagination", "fix/order-totals"} <= set(r["branches"])
+    assert r["remote"] is not None and os.path.basename(r["remote"]["path"]) == "orders.git"
+    assert r["stashes"] and r["worktree"]["untracked"]
+
+
+def test_orders_scenarios_are_reproducible(tmp_path):
+    a = build(scenario="orders", git_dir=str(tmp_path / "a"))
+    b = build(scenario="orders", git_dir=str(tmp_path / "b"))
+    assert [c["sha"] for c in a["commits"]] == [c["sha"] for c in b["commits"]]
+    behind = build(scenario="orders-behind", git_dir=str(tmp_path / "a"))
+    path = behind["path"]
+    git(path, "fetch", "-q", "origin")
+    assert rev_list_count(path, "main..origin/main") == 2
 
 
 def test_working_tree_states_and_stashes(tmp_path):

@@ -135,6 +135,33 @@ SCENARIOS: Dict[str, Dict] = {
         "diverge_at": 200,
         "fast": True,
     },
+    "orders": {
+        "_doc": "The sample app git-sim's README draws: two topic branches, a tag, a remote one commit behind local main, something in every working-tree zone, a stash and the reflog.",
+        "name": "orders",
+        "style": "realistic",
+        "seed": 42,
+        "commits": 6,
+        "branches": 3,
+        "diverge_at": 4,
+        "branch_names": ["feature/pagination", "fix/order-totals"],
+        "tags": ["v1.0.0"],
+        "remote": True,
+        "ahead": 1,
+        "modified": 1,
+        "staged": 1,
+        "untracked": 1,
+        "stashes": 1,
+        "reflog": 2,
+    },
+    "orders-behind": {
+        "_doc": "The same sample app with a remote that gained two commits since the last fetch: git-sim's README draws fetch and pull on it.",
+        "name": "orders-behind",
+        "style": "realistic",
+        "seed": 42,
+        "commits": 6,
+        "remote": True,
+        "behind": 2,
+    },
 }
 
 
